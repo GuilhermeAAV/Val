@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Saint Valentin</title>
+  <style>
+    :root {
+      --bg: #fff2f7;
+      --card: #ffffff;
+      --text: #2d1f2a;
+      --accent: #ff4d88;
+      --accent-2: #ff8fb3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% 0%, #ffe3ef, transparent 70%),
+        radial-gradient(1000px 500px at 90% 10%, #ffd6e7, transparent 60%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: min(560px, 92vw);
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+      padding: 32px 28px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::after {
+      content: none;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 3vw, 32px);
+      letter-spacing: 0.5px;
+    }
+    p {
+      margin: 0 0 26px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+    .buttons {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      place-items: center;
+      min-height: 120px;
+    }
+    button {
+      border: 0;
+      padding: 12px 22px;
+      font-size: 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    }
+    #yes {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 10px 20px rgba(255,77,136,0.35);
+    }
+    #yes:hover { transform: translateY(-2px); }
+
+    #no {
+      background: #f3f3f3;
+      color: #555;
+      position: fixed;
+      left: 50%;
+      top: 60%;
+      transform: translateX(-50%);
+    }
+    #no.exit {
+      animation: fly-away 700ms ease-in forwards;
+    }
+    @keyframes fly-away {
+      0% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translate(40vw, -40vh) rotate(18deg) scale(0.2); opacity: 0; }
+    }
+
+    .hearts {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .heart {
+      position: absolute;
+      font-size: 20px;
+      opacity: 0;
+      animation: float 2.2s ease forwards;
+    }
+    @keyframes float {
+      0% { transform: translateY(10px) scale(0.8); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(-120px) scale(1.2); opacity: 0; }
+    }
+
+    .success {
+      display: none;
+      margin-top: 18px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .mood-wrap {
+      display: none;
+      font-size: clamp(48px, 10vw, 120px);
+      line-height: 1;
+      margin-bottom: 0;
+    }
+    .mood-wrap.show {
+      display: block;
+    }
+
+    .heart-beat {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .heart-shape {
+      width: min(60vmin, 520px);
+      aspect-ratio: 1 / 1;
+      position: relative;
+      transform: rotate(-45deg) scale(0.2);
+      opacity: 0;
+      background: radial-gradient(circle at 35% 35%, #ff9fbd 0%, #ff4d88 40%, #e93672 70%);
+      box-shadow: 0 0 80px rgba(255,77,136,0.5);
+    }
+    .heart-shape::before,
+    .heart-shape::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: inherit;
+    }
+    .heart-shape::before {
+      top: -50%;
+      left: 0;
+    }
+    .heart-shape::after {
+      left: 50%;
+      top: 0;
+    }
+    .heart-beat.active .heart-shape {
+      animation: beat 1.4s ease-in-out 1;
+    }
+    @keyframes beat {
+      0% { transform: rotate(-45deg) scale(0.2); opacity: 0; }
+      20% { transform: rotate(-45deg) scale(1); opacity: 0.85; }
+      40% { transform: rotate(-45deg) scale(0.78); opacity: 0.6; }
+      60% { transform: rotate(-45deg) scale(1.18); opacity: 0.9; }
+      100% { transform: rotate(-45deg) scale(2.2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="heart-beat" id="beat">
+    <div class="heart-shape" aria-hidden="true"></div>
+  </div>
+  <div class="mood-wrap" id="mood-wrap" aria-hidden="true">
+    <span id="mood">🙂</span>
+  </div>
+  <div class="card">
+    <div class="hearts" id="hearts"></div>
+    <h1>Veux-tu etre ma Valentine ?</h1>
+    <p id="subtitle">
+      <span id="subtitle-text">Promis, je m'occupe de tout. Diner, douceur et sourires.</span>
+    </p>
+
+    <div class="buttons" id="arena">
+      <button id="yes">Oui, avec plaisir !</button>
+      <button id="no" aria-label="Non">Non</button>
+    </div>
+
+    <div class="success" id="success">Yesss ! Rendez-vous le 14 fevrier.</div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const hearts = document.getElementById("hearts");
+    const success = document.getElementById("success");
+    const beat = document.getElementById("beat");
+    const subtitle = document.getElementById("subtitle");
+    const subtitleText = document.getElementById("subtitle-text");
+    const mood = document.getElementById("mood");
+    const moodWrap = document.getElementById("mood-wrap");
+
+    const hoverLines = [
+      "Hmmm on va dire que t'as pas fait expres...",
+      "Qu'est-ce tu fais Marion ?",
+      "Je vais commencer à m'énerver...",
+      "Va manger ton caca",
+      "Continue et je te pete dessus",
+      "Bon j'ai plus le temps pour tes betises"
+    ];
+    let hoverIndex = 0;
+    let hoverCount = 0;
+    const moodSteps = ["🙂", "😐", "😒", "😠", "😡", "🤬"];
+
+    function moveNo() {
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = window.innerWidth - btnRect.width;
+      const maxY = window.innerHeight - btnRect.height;
+
+      const x = Math.max(0, Math.floor(Math.random() * maxX));
+      const y = Math.max(0, Math.floor(Math.random() * maxY));
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transform = "translate(0, 0)";
+    }
+
+    function placeNoBelowYes() {
+      const yesRect = yesBtn.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const x = Math.max(0, Math.min(window.innerWidth - btnRect.width, yesRect.left + (yesRect.width / 2) - (btnRect.width / 2)));
+      const y = Math.max(0, Math.min(window.innerHeight - btnRect.height, yesRect.bottom + 16));
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.transform = "translate(0, 0)";
+    }
+
+    function popHearts() {
+      for (let i = 0; i < 6; i++) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = "❤";
+        h.style.left = Math.random() * 90 + "%";
+        h.style.bottom = "-10px";
+        h.style.animationDelay = (i * 0.08) + "s";
+        hearts.appendChild(h);
+        h.addEventListener("animationend", () => h.remove());
+      }
+    }
+
+    noBtn.addEventListener("mouseenter", () => {
+      moveNo();
+      subtitleText.textContent = hoverLines[hoverIndex];
+      hoverIndex = (hoverIndex + 1) % hoverLines.length;
+      hoverCount += 1;
+      const moodIndex = Math.min(moodSteps.length - 1, hoverCount - 1);
+      mood.textContent = moodSteps[moodIndex];
+      if (!moodWrap.classList.contains("show")) {
+        moodWrap.classList.add("show");
+      }
+    });
+    noBtn.addEventListener("click", moveNo);
+    noBtn.addEventListener("touchstart", moveNo);
+
+    yesBtn.addEventListener("click", () => {
+      success.style.display = "block";
+      popHearts();
+      beat.classList.remove("active");
+      void beat.offsetWidth;
+      beat.classList.add("active");
+      noBtn.classList.add("exit");
+    });
+
+    beat.addEventListener("animationend", () => {
+      beat.classList.remove("active");
+    });
+
+    window.addEventListener("resize", placeNoBelowYes);
+    window.addEventListener("load", placeNoBelowYes);
+  </script>
+</body>
+</html>
