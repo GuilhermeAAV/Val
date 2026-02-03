@@ -26,6 +26,12 @@
       place-items: center;
       padding: 24px;
     }
+    .stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
     .card {
       width: min(560px, 92vw);
       background: var(--card);
@@ -172,14 +178,15 @@
   <div class="heart-beat" id="beat">
     <div class="heart-shape" aria-hidden="true"></div>
   </div>
-  <div class="mood-wrap" id="mood-wrap" aria-hidden="true">
-    <span id="mood">🙂</span>
-  </div>
-  <div class="card">
+  <div class="stack">
+    <div class="mood-wrap" id="mood-wrap" aria-hidden="true">
+      <span id="mood">🙂</span>
+    </div>
+    <div class="card">
     <div class="hearts" id="hearts"></div>
     <h1>Veux-tu etre ma Valentine ?</h1>
     <p id="subtitle">
-      <span id="subtitle-text">Promis, je m'occupe de tout. Diner, douceur et sourires.</span>
+      <span id="subtitle-text">Fait attention à ta réponse</span>
     </p>
 
     <div class="buttons" id="arena">
@@ -187,11 +194,12 @@
       <button id="no" aria-label="Non">Non</button>
     </div>
 
-    <div class="success" id="success">Yesss ! Rendez-vous le 14 fevrier.</div>
+    <div class="success" id="success">Mashallah, prépare toi pour ta première saint Valentin.</div>
 
+    </div>
   </div>
  
-  
+
   <script>
     const noBtn = document.getElementById("no");
     const yesBtn = document.getElementById("yes");
